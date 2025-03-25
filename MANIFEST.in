@@ -1,0 +1,2 @@
+include app/templates/*.html
+recursive-include app/templates *
