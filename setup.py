@@ -9,7 +9,7 @@ setup(
     ],
     entry_points={
         "console_scripts": [
-            "flask-app = app.main:main",  # This will allow you to run the app using 'flask-app' command
+            "buchdashboard" = app.main:main",  # This will allow you to run the app using 'flask-app' command
         ],
     },
     include_package_data=True,

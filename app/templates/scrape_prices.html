@@ -1,0 +1,9 @@
+<!-- scrape_prices.html -->
+<h1>Prices for {{ book.title }}</h1>
+<ul>
+    {% for site, price in prices.items() %}
+    <li>{{ site }}: {{ price }}</li>
+    {% endfor %}
+</ul>
+<a href="{{ url_for('index') }}">Back to Dashboard</a>
+

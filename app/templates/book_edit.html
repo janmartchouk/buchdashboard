@@ -1,0 +1,12 @@
+<!-- book_edit.html -->
+<h1>{% if book %}Edit Book{% else %}Add New Book{% endif %}</h1>
+<form method="POST">
+    <label>Title</label>
+    <input type="text" name="title" value="{{ book.title if book else '' }}" required><br>
+    <label>ISBN</label>
+    <input type="text" name="isbn" value="{{ book.isbn if book else '' }}"><br>
+    <label>Links (Comma separated)</label>
+    <input type="text" name="links" value="{{ ', '.join(book.links) if book else '' }}"><br>
+    <button type="submit">Save</button>
+</form>
+
