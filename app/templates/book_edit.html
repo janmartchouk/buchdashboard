@@ -1,12 +1,48 @@
-<!-- book_edit.html -->
-<h1>{% if book %}Edit Book{% else %}Add New Book{% endif %}</h1>
+<!DOCTYPE HTML>
+<html>
+<head>
+<title>Add or Edit</title>
+<link rel=stylesheet href="https://martcho.uk/lib/martcho.uk.css" />
+<style>
+h1.title {
+	margin: .4rem auto 0 1rem;
+}
+
+nav {
+	display: flex;
+	padding: 1rem 0 ;
+	align-items: center;
+}
+main {
+	padding: 2rem;
+}
+input {
+	margin-bottom: .5rem;
+}
+form {
+	max-width: 50rem;
+	display: grid;
+	grid-template-columns: 1fr 1fr;
+}
+label {
+	margin-top: .8rem;
+}
+</style>
+</head>
+<body>
+<nav class="blue">
+	<h1 class='c-white title'>{% if book %}Edit Book{% else %}Add New Book{% endif %}</h1>
+</nav>
+<main>
 <form method="POST">
     <label>Title</label>
-    <input type="text" name="title" value="{{ book.title if book else '' }}" required><br>
+    <input type="text" name="title" value="{{ book.title if book else '' }}" required>
     <label>ISBN</label>
-    <input type="text" name="isbn" value="{{ book.isbn if book else '' }}"><br>
-    <label>Links (Comma separated)</label>
-    <input type="text" name="links" value="{{ ', '.join(book.links) if book else '' }}"><br>
-    <button type="submit">Save</button>
+    <input type="text" name="isbn" value="{{ book.isbn if book else '' }}">
+    <!--label>Links (Comma separated)</label>
+    <input type="text" name="links" value="{{ ', '.join(book.links) if book else '' }}"-->
+    <button class='btn white' type="submit">Save</button>
 </form>
-
+</main>
+</body>
+</html>
