@@ -9,6 +9,9 @@ def get_books():
         books = json.parse(f.read())
     return books
 
-if __name__ == "__main__":
+def main():
     app.run(debug=True)
+
+if __name__ == "__main__":
+    main()
 
