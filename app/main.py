@@ -4,25 +4,90 @@ import json
 import os
 import requests
 from bs4 import BeautifulSoup
-from config import BUYING_SITES
+#from config import BUYING_SITES
 import logging
+from pathlib import Path
+import sys
 
 logging.basicConfig(level=logging.DEBUG)
 
 app = Flask(__name__)
 
 BOOKS_FILE = 'books.json'
+CONFIG_FILE = 'config.json'
+APP_NAME = 'buchdashboard'
+
+def get_xdg_config_home():
+    """
+    Get the XDG configuration home directory.
+    Follows the XDG Base Directory Specification.
+    """
+    # Check if XDG_CONFIG_HOME is set, otherwise use default
+    xdg_config_home = os.environ.get('XDG_CONFIG_HOME')
+    if xdg_config_home:
+        return Path(xdg_config_home)
+    
+    # Default to ~/.config if not set
+    return Path.home() / '.config'
+
+def get_app_config_dir(APP_NAME):
+    """
+    Get the configuration directory for a specific application.
+    """
+    config_home = get_xdg_config_home()
+    app_config_dir = config_home / APP_NAME
+    
+    # Create the directory if it doesn't exist
+    app_config_dir.mkdir(parents=True, exist_ok=True)
+    
+    return app_config_dir
+
+def get_config_value(value):
+    config_dir = get_app_config_dir(APP_NAME)
+    config_path = config_dir / CONFIG_FILE
+
+    if not os.path.exists(config_path):
+        write_default_config()
+    
+    with open(config_path, 'r') as config_file:
+        return json.load(config_file)[value]
+
+def write_default_config():
+    try:
+        with open(config_path, 'w') as config_file:
+            # WRITE DEFAULT CONFIG
+            config_file.write("""{
+"BUYING_SITES" : {
+"booklooker": "https://www.booklooker.de/B%C3%BCcher/Angebote/isbn={isbn}?sortOrder=preis_total",
+"zvab": "https://www.zvab.com/servlet/SearchResults?ch_sort=t&cm_sp=sort-_-SRP-_-Results&ds=30&isbn={isbn}&rollup=on&sortby=2",
+"medimops": "https://www.medimops.de/produkte-C0/?fcIsSearch=1&searchparam={isbn}&listorder=asc&listorderby=oxvarminprice",
+"rebuy": "https://www.rebuy.de/kaufen/suchen?q={isbn}&sortBy=price_asc&inStock=1",
+"bookbot": "https://bookbot.de/p/instock/1/language/4/q/{isbn}.price_asc",
+"abebooks": "https://www.abebooks.de/servlet/SearchResults?ch_sort=t&cm_sp=sort-_-SRP-_-Results&ds=20&kn={isbn}&rollup=on&sortby=2",
+"eurobuch": "https://www.eurobuch.de/buch/isbn/{isbn}.html",
+"buchfreund": "https://www.buchfreund.de/de/angebote/{isbn}/"
+}
+}
+""")
+    except Exception as e:
+        logging.error(e)
+        sys.exit(1)
+
 
 def read_books():
     """Read books from the JSON file."""
-    if os.path.exists(BOOKS_FILE):
-        with open(BOOKS_FILE, 'r') as file:
+    config_dir = get_app_config_dir(APP_NAME)
+    books_path = config_dir / BOOKS_FILE
+    if os.path.exists(books_path):
+        with open(books_path, 'r') as file:
             return json.load(file)
     return []
 
 def write_books(books):
     """Write books to the JSON file."""
-    with open(BOOKS_FILE, 'w') as file:
+    config_dir = get_app_config_dir(APP_NAME)
+    books_path = config_dir / BOOKS_FILE
+    with open(books_path, 'w') as file:
         json.dump(books, file, indent=4)
 
 def get_next_id():
@@ -93,7 +158,7 @@ def process_book_prices(book):
         # Create futures for price scraping on different sites for this book
         futures = {
             executor.submit(scrape_price, url_template.format(isbn=book['isbn'])): site
-            for site, url_template in BUYING_SITES.items()
+            for site, url_template in get_config_value('BUYING_SITES').items()
         }
         
         # Process the results as they complete
@@ -153,7 +218,7 @@ def scrape_all_prices():
 @app.route('/')
 def index():
     books = read_books()
-    return render_template('index.html', books=books, BUYING_SITES=BUYING_SITES)
+    return render_template('index.html', books=books, BUYING_SITES=get_config_value('BUYING_SITES'))
 
 @app.route('/add', methods=['GET', 'POST'])
 def add_book():
