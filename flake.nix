@@ -2,47 +2,54 @@
   description = "BuchDashboard";
 
   inputs = {
-    # Import the Nixpkgs repository, which contains the Python environment and packages
     nixpkgs.url = "github:nixos/nixpkgs/nixos-unstable";
-
-    # This brings in the flake-utils to help with the build process
     flake-utils.url = "github:numtide/flake-utils";
   };
 
-  outputs = { self, nixpkgs, flake-utils }: flake-utils.lib.eachSystem [
-    "x86_64-linux" "aarch64-linux"
-  ] (system: {
-    # Python development environment with Flask
-    devShell = nixpkgs.legacyPackages.${system}.mkShell {
-      buildInputs = with nixpkgs.legacyPackages.${system}; [
-        python3
-        python3Packages.flask
-	python3Packages.waitress
-        python3Packages.pip
-	python3Packages.requests
-	python3Packages.beautifulsoup4
-      ];
+  outputs = { self, nixpkgs, flake-utils }:
+    flake-utils.lib.eachSystem [ "x86_64-linux" "aarch64-linux" ] (system:
+      let
+        pkgs = nixpkgs.legacyPackages.${system};
+        python = pkgs.python3;
+        pythonPackages = python.pkgs;
+      in {
+        # Dev shell for development
+        devShell = pkgs.mkShell {
+          buildInputs = with pythonPackages; [
+            flask
+            waitress
+            pip
+            requests
+            beautifulsoup4
+          ];
 
-      shellHook = ''
-	exec zsh
-      '';
-    };
+          shellHook = ''exec zsh'';
+        };
 
-    # Python package with Flask
-    packages.default = nixpkgs.legacyPackages.${system}.python3Packages.buildPythonPackage rec {
-      pname = "buchdashboard";
-      version = "1.0";
+        # Properly build Python application
+        packages.default = pythonPackages.buildPythonApplication rec {
+          pname = "buchdashboard";
+          version = "1.0";
+          src = ./.;
 
-      src = ./.;
+          # Runtime dependencies
+          propagatedBuildInputs = with pythonPackages; [
+            flask
+            waitress
+            requests
+            beautifulsoup4
+          ];
 
-      nativeBuildInputs = [ nixpkgs.legacyPackages.${system}.python3Packages.setuptools ];
+          # Disable automatic tests
+          doCheck = false;
 
-      meta = with nixpkgs.lib; {
-        description = "buchdashboard";
-        license = licenses.mit;
-        platforms = platforms.all;
-      };
-    };
-  });
+          meta = with pkgs.lib; {
+            description = "buchdashboard";
+            license = licenses.mit;
+            platforms = platforms.all;
+          };
+        };
+      }
+    );
 }
 
