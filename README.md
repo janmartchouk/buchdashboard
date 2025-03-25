@@ -25,9 +25,7 @@ Die Bücher werden in einer einfachen JSON-Datei in `$XDG_CONFIG_HOME/buchdashbo
 Empfohlen ist die Benutzung über den mitgelieferten Nix-Flake. Dazu den [Nix](https://nixos.org/download/)-Paketmanager installieren. BuchDashboard kann dann mit 
 
 ```
-git clone https://github.com/janmartchouk/buchdashboard.git
-cd buchdashboard
-nix run
+nix run github:janmartchouk/buchdashboard
 ```
 
 gestartet werden. Alternativ können die dependencies manuell via pip installiert und das Programm über `python3 app/main.py` gestartet werden.
