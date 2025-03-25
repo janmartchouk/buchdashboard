@@ -13,7 +13,7 @@ setup(
         ],
     },
     include_package_data=True,
-    package_data={"buchdashboard":["templates/*.html","config_default.json"]},
+    #package_data={"buchdashboard":["templates/*.html","config_default.json"]},
     zip_safe=False,
 )
 
