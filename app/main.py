@@ -271,7 +271,9 @@ def delete_book(book_id):
     return redirect(url_for('index'))
 
 def main():
-    app.run(debug=True)
+    from waitress import serve
+    serve(app, host="127.0.0.1", port=8080)
+#    app.run(debug=True)
     
 if __name__ == '__main__':
     main()

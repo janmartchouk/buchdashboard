@@ -17,6 +17,7 @@
       buildInputs = with nixpkgs.legacyPackages.${system}; [
         python3
         python3Packages.flask
+	python3Packages.waitress
         python3Packages.pip
 	python3Packages.requests
 	python3Packages.beautifulsoup4
