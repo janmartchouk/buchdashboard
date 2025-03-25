@@ -47,28 +47,31 @@ def get_config_value(value):
     config_path = config_dir / CONFIG_FILE
 
     if not os.path.exists(config_path):
-        write_default_config()
+        write_default_config(config_dir)
     
     with open(config_path, 'r') as config_file:
         return json.load(config_file)[value]
 
-def write_default_config():
+def write_default_config(config_dir):
     try:
-        with open(config_path, 'w') as config_file:
+        with open('app/config_default.json','r') as default_config_file:
+            default_config = default_config_file.read()
+        with open(config_dir / CONFIG_FILE, 'w') as config_file:
             # WRITE DEFAULT CONFIG
-            config_file.write("""{
-"BUYING_SITES" : {
-"booklooker": "https://www.booklooker.de/B%C3%BCcher/Angebote/isbn={isbn}?sortOrder=preis_total",
-"zvab": "https://www.zvab.com/servlet/SearchResults?ch_sort=t&cm_sp=sort-_-SRP-_-Results&ds=30&isbn={isbn}&rollup=on&sortby=2",
-"medimops": "https://www.medimops.de/produkte-C0/?fcIsSearch=1&searchparam={isbn}&listorder=asc&listorderby=oxvarminprice",
-"rebuy": "https://www.rebuy.de/kaufen/suchen?q={isbn}&sortBy=price_asc&inStock=1",
-"bookbot": "https://bookbot.de/p/instock/1/language/4/q/{isbn}.price_asc",
-"abebooks": "https://www.abebooks.de/servlet/SearchResults?ch_sort=t&cm_sp=sort-_-SRP-_-Results&ds=20&kn={isbn}&rollup=on&sortby=2",
-"eurobuch": "https://www.eurobuch.de/buch/isbn/{isbn}.html",
-"buchfreund": "https://www.buchfreund.de/de/angebote/{isbn}/"
-}
-}
-""")
+#            config_file.write("""{
+#"BUYING_SITES" : {
+#"booklooker": "https://www.booklooker.de/B%C3%BCcher/Angebote/isbn={isbn}?sortOrder=preis_total",
+#"zvab": "https://www.zvab.com/servlet/SearchResults?ch_sort=t&cm_sp=sort-_-SRP-_-Results&ds=30&isbn={isbn}&rollup=on&sortby=2",
+#"medimops": "https://www.medimops.de/produkte-C0/?fcIsSearch=1&searchparam={isbn}&listorder=asc&listorderby=oxvarminprice",
+#"rebuy": "https://www.rebuy.de/kaufen/suchen?q={isbn}&sortBy=price_asc&inStock=1",
+#"bookbot": "https://bookbot.de/p/instock/1/language/4/q/{isbn}.price_asc",
+#"abebooks": "https://www.abebooks.de/servlet/SearchResults?ch_sort=t&cm_sp=sort-_-SRP-_-Results&ds=20&kn={isbn}&rollup=on&sortby=2",
+#"eurobuch": "https://www.eurobuch.de/buch/isbn/{isbn}.html",
+#"buchfreund": "https://www.buchfreund.de/de/angebote/{isbn}/"
+#}
+#}
+#""")
+            config_file.write(default_config)
     except Exception as e:
         logging.error(e)
         sys.exit(1)
