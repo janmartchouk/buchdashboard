@@ -34,7 +34,7 @@ Die Bücher werden in einer einfachen JSON-Datei in `$XDG_CONFIG_HOME/buchdashbo
 
 - Buchcover / Metadaten irgendwoher ranholen, anzeigen?
 - Mehr Händler, z.B. Amazon, eBay
-- Konfiguration der releavanten HTML-Tags in config.json auslagern
+- Konfiguration der relevanten HTML-Tags in config.json auslagern
 - Benutzerdefinierte sortierung der Einträge ermöglichen
 - Ggf. auch Sortierung nach Titel, Autor usw.
 - An- und Ausschalten der Händler über Frontend
