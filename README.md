@@ -2,7 +2,7 @@
 
 Dashboard für eine Übersicht der Preise von gebrauchten Büchern bei verschiedenen Onlinehändlern.
 
-![image](https://github.com/user-attachments/assets/46506a51-2cd9-4dc3-881d-7c66e63f15ad)
+![image](https://github.com/user-attachments/assets/ecacde5b-f765-463e-8f45-479542e89c3b)
 
 Über den Add Book-Button können Bücher hinzugefügt werden. Dazu muss ein Titel sowie eine ISBN eingetragen werden. Mit einem Klick auf Refresh oder auf Refresh All (für alle Bücher) werden die Preise von den Onlinehändlern eingeholt und angezeigt. 
 
