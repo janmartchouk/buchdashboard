@@ -9,6 +9,10 @@ import logging
 from pathlib import Path
 import sys
 
+# for progress bar
+from flask import jsonify
+import threading
+
 logging.basicConfig(level=logging.DEBUG)
 
 app = Flask(__name__)
@@ -16,6 +20,11 @@ app = Flask(__name__)
 BOOKS_FILE = 'books.json'
 CONFIG_FILE = 'config.json'
 APP_NAME = 'buchdashboard'
+
+# Global variables to track progress for progress bar
+scraping_in_progress = False
+scraping_progress = 0
+total_books = 0
 
 def get_xdg_config_home():
     """
@@ -181,7 +190,12 @@ def scrape_all_prices():
     """
     Scrapes prices for all books concurrently and writes updated books.
     """
+    global scraping_in_progress, scraping_progress, total_books
+    
     books = read_books()
+    total_books = len(books)
+    scraping_progress = 0
+    scraping_in_progress = True
     
     # Process books concurrently
     with concurrent.futures.ThreadPoolExecutor() as executor:
@@ -194,14 +208,17 @@ def scrape_all_prices():
             try:
                 updated_book = future.result()
                 updated_books.append(updated_book)
+                scraping_progress += 1
             except Exception as e:
                 logging.error(f"Error processing book: {e}")
+                scraping_progress += 1
         
         # Ensure we maintain the original order if needed
         updated_books.sort(key=lambda b: books.index(b))
     
     # Write updated books
     write_books(updated_books)
+    scraping_in_progress = False
 
 @app.route('/')
 def index():
@@ -258,8 +275,18 @@ def scrape_prices(book_id):
 @app.route('/scrape_all_prices', methods=['POST'])
 def scrape_all_prices_route():
     """Trigger scraping all books' prices."""
-    scrape_all_prices()
+    threading.Thread(target=scrape_all_prices).start()
     return redirect(url_for('index'))
+
+@app.route('/scraping_status')
+def scraping_status():
+    """Return the current scraping progress."""
+    return jsonify({
+        'in_progress': scraping_in_progress,
+        'progress': scraping_progress,
+        'total': total_books,
+        'percentage': int((scraping_progress / total_books * 100) if total_books > 0 else 0)
+    })
 
 @app.route('/delete/<int:book_id>', methods=['POST'])
 def delete_book(book_id):

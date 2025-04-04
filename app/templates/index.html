@@ -7,7 +7,9 @@
 h1.title {
 	margin: .4rem auto 0 1.5rem;
 	font-size: 2.3rem;
-}
+	z-index: 20;
+	position: relative;
+} 
 
 nav {
 	display: flex;
@@ -19,6 +21,10 @@ nav {
 	position: fixed;
 	width: 100vw;
 	border-bottom: 5px solid black;
+	z-index: 5;
+	> * {
+		z-index: 20;
+	}
 }
 
 .btn, .btn:hover {
@@ -93,6 +99,11 @@ nav {
 <body>
 
 <nav class='blue'>
+            <div id="progressBar" style="transition: .2s ease-in-out; position: absolute; top: 0; left:0; height: 100%; width: 0%; background-color: var(--black); 
+                 display: flex; align-items: center; justify-content: center; color: black; font-weight: bold;"></div>
+        <!--p id="progressText">Processing 0 of 0 books</p-->
+    </div>
+
 <h1 class='title c-white'>BuchDashboard</h1>
 
 <!-- Add Book Button -->
@@ -132,6 +143,77 @@ nav {
     </div>
     {% endfor %}
 </div>
+
+
+<!-- Add JavaScript for the progress tracking -->
+<script>
+    let checkingProgress = false;
+    
+    document.querySelectorAll('form[action="{{ url_for("scrape_all_prices_route") }}"]').forEach(form => {
+        form.addEventListener('submit', function(e) {
+            e.preventDefault();
+            
+            // Show progress modal
+            // document.getElementById('progressModal').style.display = 'flex';
+            
+            // Submit the form
+            fetch(this.action, {
+                method: 'POST',
+                body: new FormData(this)
+            }).then(() => {
+                // Start checking progress
+                checkProgress();
+            });
+        });
+    });
+    
+    function checkProgress() {
+        checkingProgress = true;
+        
+        fetch('/scraping_status')
+            .then(response => response.json())
+            .then(data => {
+                // Update the progress bar
+                const progressBar = document.getElementById('progressBar');
+                const progressText = document.getElementById('progressText');
+                
+                progressBar.style.width = data.percentage + '%';
+		progressBar.style.opacity = '100';
+                //progressBar.textContent = data.percentage + '%';
+                //progressText.textContent = `Processing ${data.progress} of ${data.total} books`;
+                
+                if (data.in_progress) {
+                    // Check again in a second
+                    setTimeout(checkProgress, 1000);
+                } else {
+                    // Finished scraping
+                    setTimeout(() => {
+                        document.getElementById('progressBar').style.opacity = '0';
+                        // Reload the page to show updated prices
+                        window.location.reload();
+                    }, 1000);
+                    checkingProgress = false;
+                }
+            })
+            .catch(error => {
+                console.error('Error checking progress:', error);
+                // Try again in 2 seconds if still checking
+                if (checkingProgress) {
+                    setTimeout(checkProgress, 2000);
+                }
+            });
+    }
+    
+    // Check if scraping is already in progress when page loads
+    fetch('/scraping_status')
+        .then(response => response.json())
+        .then(data => {
+            if (data.in_progress) {
+                document.getElementById('progressModal').style.display = 'flex';
+                checkProgress();
+            }
+        });
+</script>
 
 </body>
 </html>
