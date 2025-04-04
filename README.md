@@ -39,4 +39,3 @@ Die Bücher werden in einer einfachen JSON-Datei in `$XDG_CONFIG_HOME/buchdashbo
 - Benutzerdefinierte sortierung der Einträge ermöglichen
 - Ggf. auch Sortierung nach Titel, Autor usw.
 - An- und Ausschalten der Händler über Frontend
-- Navbar als Progressbar fuer Refresh nutzen
