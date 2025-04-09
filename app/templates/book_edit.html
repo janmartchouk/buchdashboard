@@ -39,6 +39,9 @@ label {
     <input type="text" name="title" value="{{ book.title if book else '' }}" required>
     <label>ISBN</label>
     <input type="text" name="isbn" value="{{ book.isbn if book else '' }}">
+    <label for="price_limit">Price Limit (€):</label>
+	<input type="number" step="0.01" name="price_limit" value="{{ book.price_limit if book and book.price_limit else '' }}">
+
     <!--label>Links (Comma separated)</label>
     <input type="text" name="links" value="{{ ', '.join(book.links) if book else '' }}"-->
     <button class='btn white' type="submit">Save</button>

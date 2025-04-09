@@ -181,6 +181,15 @@ def process_book_prices(book):
     # Sort by price value (ascending order)
     sorted_prices.sort(key=lambda x: x[1])
     sorted_prices_dict = {site: f"{price:.2f}€" for site, price in sorted_prices}
+
+    # Set under_limit to true if under limit
+    book["under_limit"] = False
+    price_limit = book.get('price_limit', 0)
+    if price_limit > 0:
+        for price in sorted_prices_dict.items():
+            if parse_price(price[1]) <= price_limit:
+                book["under_limit"] = True
+                break
     
     # Update book with sorted prices
     book['prices'] = sorted_prices_dict
@@ -236,7 +245,8 @@ def add_book():
             'title': title,
             'isbn': isbn,
             'links': [link.strip() for link in links if link.strip()],
-            'prices': {}  # Initialize with empty prices
+            'prices': {},  # Initialize with empty prices
+            'price_limit': float(request.form.get('price_limit') or 0)  # 0 means no limit
         }
         books = read_books()
         books.append(book)
@@ -255,6 +265,7 @@ def edit_book(book_id):
         book['title'] = request.form['title']
         book['isbn'] = request.form['isbn']
         book['links'] = request.form.get('links', '').split(',')
+        book['price_limit'] = float(request.form.get('price_limit') or 0)
         write_books(books)
         return redirect(url_for('index'))
 

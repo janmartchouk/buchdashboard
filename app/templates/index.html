@@ -76,6 +76,11 @@ nav {
 		}
 	}
 }
+
+.book.underLimit ul li:nth-child(1) {
+	color: var(--blue);
+}
+
 .book:hover {
 	.book-buttons {
 		opacity: 1;
@@ -91,8 +96,8 @@ nav {
 	white-space: nowrap;
 	overflow: hidden;
 		  }
-	border-top-right-radius: 5px;
-	border-top-left-radius: 5px;
+	border-top-right-radius: 12px;
+	border-top-left-radius: 12px;
 }
 </style>
 </head>
@@ -118,9 +123,9 @@ nav {
 
 <div class='books'>
     {% for book in books %}
-    <div class='book border blue c-white'>
-	    <div class="book-top black">
-		<strong class='title book-title'>{{ book.title }}</strong><span class='subtitle isbn'>{{ book.isbn }}</span>
+    <div class='book border {{ 'underLimit green c-black' if book.under_limit else 'blue c-white' }}'>
+	    <div class="book-top black c-white">
+		    <strong class='title book-title'>{{ book.title }}</strong><span class='subtitle isbn'>{{ book.isbn }}{{'  •  Limit ' if book.price_limit else ''}}{{ book.price_limit ~ '€' }}</span>
 	    </div>
 
         <ul>
