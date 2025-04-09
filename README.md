@@ -33,8 +33,11 @@ Die Bücher werden in einer einfachen JSON-Datei in `$XDG_CONFIG_HOME/buchdashbo
 ### Geplante Features (Contributing gern gesehen):
 
 - Buchcover / Metadaten irgendwoher ranholen, anzeigen?
+- ~~Preislimit pro Buch festlegen; anzeigen, wenn eins drunterliegt~~ ✅
 - Mehr Händler, z.B. Amazon, eBay
 - Konfiguration der relevanten HTML-Tags in config.json auslagern
 - Benutzerdefinierte sortierung der Einträge ermöglichen
 - Ggf. auch Sortierung nach Titel, Autor usw.
 - An- und Ausschalten der Händler über Frontend
+- ~~Navbar als Progressbar fuer Refresh nutzen~~ ✅
+
