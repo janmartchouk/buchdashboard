@@ -125,7 +125,7 @@ nav {
     {% for book in books %}
     <div class='book border {{ 'underLimit green c-black' if book.under_limit else 'blue c-white' }}'>
 	    <div class="book-top black c-white">
-		    <strong class='title book-title'>{{ book.title }}</strong><span class='subtitle isbn'>{{ book.isbn }}{{'  •  Limit ' if book.price_limit else ''}}{{ book.price_limit ~ '€' }}</span>
+		    <strong class='title book-title'>{{ book.title }}</strong><span class='subtitle isbn'>{{ book.isbn }}{{'  •  Limit ' if book.price_limit else ''}}{{ book.price_limit }}{{ '€' if book.price_limit else '' }}</span>
 	    </div>
 
         <ul>
